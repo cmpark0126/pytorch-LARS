@@ -12,8 +12,8 @@ import torchvision.models as models
 import os
 import time
 
-from Optimizer import SGD_without_lars, SGD_with_lars, SGD_with_lars_ver2
-from Scheduler import GradualWarmupScheduler, PolynomialLRDecay
+from optimizer import SGD_without_lars, SGD_with_lars, SGD_with_lars_ver2
+from scheduler import GradualWarmupScheduler, PolynomialLRDecay
 from hyperparams import Hyperparams as hp
 from utils import progress_bar
 
