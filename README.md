@@ -1,12 +1,32 @@
 # Implement LARS
 
-### Task
-1. LARS를 사용하지 않았을 때의 결과 확인
-    * 논문에 나온 비교군들을 확인할 필요 있음
-    * batch 16K is out of memory
-    
-2. LARS 구현 
-    * LARS가 제대로 동작하고 있다는 것을 확인하는 Test 진행
-    * 만약 여유가 있다면, cuda를 사용해서 학습 속도를 가속시켜보는 것으로 한다.
+### Object
+* link: ["Large Batch Training of Convolutional Networks (LARS)"](https://arxiv.org/abs/1708.03888)
+* 위 논문에 소개된 LARS를 PyTorch로 구현
+* Data: CIFAR10
 
-3. Tensor board 등을 사용해서 각 Layer 별 학습 양상 확인 (optional)
+### Usage
+```bash
+$ git clone https://github.com/cmpark0126/pytorch-LARS.git
+$ cd pytorch-LARS/
+$ vi hyperparams.py # hyperparameter 및 config용 요소 확인. 필요시 수정 가능
+$ python train.py # CIFAR10 학습 시작
+$ python val.py # 학습 결과 확인
+```
+
+### Result
+##### Attempt 1
+##### Attempt 2
+##### Attempt 3
+##### Attempt 4
+##### Attempt 5
+
+### Reference
+* Base code: https://github.com/kuangliu/pytorch-cifar
+* warm-up LR scheduler: https://github.com/ildoonet/pytorch-gradual-warmup-lr/tree/master/warmup_scheduler
+    * 이를 기반으로 PolynomialLRDecay class 구현
+    * polynomial LR decay scheduler
+    * 참고: scheduler.py
+* Pytorch Doc / Optimizer: https://pytorch.org/docs/stable/_modules/torch/optim/optimizer.html
+    * Optimizer class
+    * SGD class
