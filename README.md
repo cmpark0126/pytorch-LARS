@@ -6,6 +6,13 @@
 -   위 논문에 소개된 LARS를 PyTorch, CUDA로 구현
 -   Data: CIFAR10
 
+## Requirements
+python == 3.6.8
+pytorch >= 1.1.0
+cuda >= 10
+matplotlib > 3.1.0
+etc.
+
 ## Usage
 
 -   Train
@@ -369,3 +376,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 -   Pytorch Doc / Optimizer: <https://pytorch.org/docs/stable/_modules/torch/optim/optimizer.html>
     -   Optimizer class
     -   SGD class
+
+## Appendix
+
+### val.py 실행 화면
