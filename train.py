@@ -90,10 +90,10 @@ with torch.cuda.device(hp.device[0]):
     #     optimizer = SGD_without_lars(net.parameters(), lr=hp.lr, momentum=hp.momentum, weight_decay=hp.weight_decay)
         optimizer = optim.SGD(net.parameters(), lr=hp.lr, momentum=hp.momentum, weight_decay=hp.weight_decay)
 
-#     warmup_scheduler = GradualWarmupScheduler(optimizer=optimizer, multiplier=hp.warmup_multiplier, total_epoch=hp.warmup_epoch)
-#     poly_decay_scheduler = PolynomialLRDecay(optimizer=optimizer, max_decay_steps=hp.max_decay_epoch * len(trainloader), 
-#                                              end_learning_rate=hp.end_learning_rate, power=2.0) # poly(2)
-    step_scheduler = optim.lr_scheduler.StepLR(optimizer=optimizer, step_size=hp.step_size, gamma=hp.gamma)
+    warmup_scheduler = GradualWarmupScheduler(optimizer=optimizer, multiplier=hp.warmup_multiplier, total_epoch=hp.warmup_epoch)
+    poly_decay_scheduler = PolynomialLRDecay(optimizer=optimizer, max_decay_steps=hp.max_decay_epoch * len(trainloader), 
+                                             end_learning_rate=hp.end_learning_rate, power=2.0) # poly(2)
+#     step_scheduler = optim.lr_scheduler.StepLR(optimizer=optimizer, step_size=hp.step_size, gamma=hp.gamma)
     
     # Training
     def train(epoch):
@@ -107,8 +107,8 @@ with torch.cuda.device(hp.device[0]):
 
         start_time = time.time()
         for batch_idx, (inputs, targets) in enumerate(trainloader):
-#             if epoch > hp.warmup_epoch: # after warmup schduler step
-#                 poly_decay_scheduler.step()
+            if epoch > hp.warmup_epoch: # after warmup schduler step
+                poly_decay_scheduler.step()
     #             for param_group in optimizer.param_groups:
     #                 print(param_group['lr'])
             inputs, targets = inputs.cuda(), targets.cuda()
@@ -184,34 +184,34 @@ with torch.cuda.device(hp.device[0]):
     hp.print_hyperparms()
     for epoch in range(0, hp.num_of_epoch):
         print('\nEpoch: %d' % epoch)
-#         if epoch <= hp.warmup_epoch: # for readability
-#             warmup_scheduler.step()
-#         if epoch > hp.warmup_epoch: # after warmup, start decay scheduler with warmup-ed learning rate
-#             poly_decay_scheduler.base_lrs = warmup_scheduler.get_lr()
+        if epoch <= hp.warmup_epoch: # for readability
+            warmup_scheduler.step()
+        if epoch > hp.warmup_epoch: # after warmup, start decay scheduler with warmup-ed learning rate
+            poly_decay_scheduler.base_lrs = warmup_scheduler.get_lr()
         for param_group in optimizer.param_groups:
             print('lr: ' + str(param_group['lr']))
         train(epoch)
         test(epoch)
-        step_scheduler.step()
+#         step_scheduler.step()
         
         epochs.append(epoch)
         train_accs.append(100.*train_correct/train_total)
         test_accs.append(100.*test_correct/test_total)
         
         plt.plot(epochs, train_accs, epochs, test_accs, 'r-')
-#         print(epochs)
-#         print(train_accs)
-#         print(test_accs)
+        state = { 'test_acc': test_accs }
         
         if not os.path.isdir('result_fig'):
             os.mkdir('result_fig')
-    
+        
         if hp.with_lars:
             plt.title('Resnet50, data=cifar10, With LARS, batch_size: ' + str(hp.batch_size))
             plt.savefig('./result_fig/withLars-' + str(hp.batch_size) + '.jpg')
+            torch.save(state, './result_fig/noLars-' + str(hp.batch_size) + '.pth')
         else:
             plt.title('Resnet50, data=cifar10, Without LARS, batch_size: ' + str(hp.batch_size))
             plt.savefig('./result_fig/noLars-' + str(hp.batch_size) + '.jpg')
+            torch.save(state, './result_fig/noLars-' + str(hp.batch_size) + '.pth')
 
     plt.gcf().clear()
   

@@ -2,13 +2,13 @@
 
 class Base:
     batch_size = 128 # initial batch size
-    lr = 0.1 # Initial learning rate
+    lr = 0.05 # Initial learning rate
     
     multiples = 1
 
 class Hyperparams:
     '''Hyper parameters'''
-    device = [0]
+    device = [Base.multiples - 1]
     
     batch_size = Base.batch_size * (2 ** (Base.multiples - 1))
     lr = Base.lr 
@@ -17,19 +17,19 @@ class Hyperparams:
     momentum = 0.9
     trust_coef = 0.1
     
-#     # warm-up step & Linear Scaling Rule
-#     warmup_multiplier = (2 ** (Base.multiples - 1)) 
-#     warmup_epoch = 5
+    # warm-up step & Linear Scaling Rule
+    warmup_multiplier = 2 * (2 ** (Base.multiples - 1)) 
+    warmup_epoch = 5
     
-#     # decay lr step
-#     max_decay_epoch = 250
-#     end_learning_rate = 0.000001 * Base.lr * (2 ** (Base.multiples - 1))
+    # decay lr step
+    max_decay_epoch = 200
+    end_learning_rate = 0.0001 * Base.lr * 2
 
-    # step rule (for LR decay)
-    step_size = 75
-    gamma = 0.1
+#     # step rule (for LR decay)
+#     step_size = 50
+#     gamma = 0.1
     
-    num_of_epoch = 225
+    num_of_epoch = 200
     
     resume = False
     
@@ -43,12 +43,12 @@ class Hyperparams:
         print('lr: ' + str(Hyperparams.lr))
         print('momentum: ' + str(Hyperparams.momentum))
         print('trust_coef: ' + str(Hyperparams.trust_coef))
-#         print('warmup_multiplier: ' + str(Hyperparams.warmup_multiplier))
-#         print('warmup_epoch: ' + str(Hyperparams.warmup_epoch))
-#         print('max_decay_epoch: ' + str(Hyperparams.max_decay_epoch))
-#         print('end_learning_rate: ' + str(Hyperparams.end_learning_rate))
-        print('step_size: ' + str(Hyperparams.step_size))
-        print('gamma: ' + str(Hyperparams.gamma))
+        print('warmup_multiplier: ' + str(Hyperparams.warmup_multiplier))
+        print('warmup_epoch: ' + str(Hyperparams.warmup_epoch))
+        print('max_decay_epoch: ' + str(Hyperparams.max_decay_epoch))
+        print('end_learning_rate: ' + str(Hyperparams.end_learning_rate))
+#         print('step_size: ' + str(Hyperparams.step_size))
+#         print('gamma: ' + str(Hyperparams.gamma))
         print('num_of_epoch: ' + str(Hyperparams.num_of_epoch))
         print('device: ' + str(Hyperparams.device))
         print('resume: ' + str(Hyperparams.resume))
@@ -60,12 +60,12 @@ class Hyperparams:
                      lr=Hyperparams.lr, 
                      momentum=Hyperparams.momentum, 
                      trust_coef=Hyperparams.trust_coef, 
-#                      warmup_multiplier=Hyperparams.warmup_multiplier, 
-#                      warmup_epoch=Hyperparams.warmup_epoch, 
-#                      max_decay_epoch=Hyperparams.max_decay_epoch, 
-#                      end_learning_rate=Hyperparams.end_learning_rate, 
-                     step_size=Hyperparams.step_size,
-                     gamma=Hyperparams.gamma,
+                     warmup_multiplier=Hyperparams.warmup_multiplier, 
+                     warmup_epoch=Hyperparams.warmup_epoch, 
+                     max_decay_epoch=Hyperparams.max_decay_epoch, 
+                     end_learning_rate=Hyperparams.end_learning_rate, 
+#                      step_size=Hyperparams.step_size,
+#                      gamma=Hyperparams.gamma,
                      num_of_epoch=Hyperparams.num_of_epoch, 
                      device=Hyperparams.device, 
                      resume=Hyperparams.resume, 
