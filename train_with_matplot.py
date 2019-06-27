@@ -16,6 +16,8 @@ from scheduler import GradualWarmupScheduler, PolynomialLRDecay
 from hyperparams import Hyperparams as hp
 from utils import progress_bar
 
+import matplotlib.pyplot as plt
+
 with torch.cuda.device(hp.device[0]):
     all_accs = []
     best_acc = 0  # best test accuracy
@@ -23,6 +25,15 @@ with torch.cuda.device(hp.device[0]):
     start_epoch = 0  # start from epoch 0 or last checkpoint epoch
     all_times = []
     time_to_train = 0
+    
+    train_correct = 0
+    train_total = 0
+    test_correct = 0
+    test_total = 0
+    
+    epochs = []
+    train_accs = []
+    test_accs = []
 
     # Data
     print('==> Preparing data..')
@@ -90,6 +101,8 @@ with torch.cuda.device(hp.device[0]):
     
     # Training
     def train(epoch):
+        global train_total
+        global train_correct
         global time_to_train
         net.train()
         train_loss = 0
@@ -115,9 +128,14 @@ with torch.cuda.device(hp.device[0]):
             progress_bar(batch_idx, len(trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                 % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
         time_to_train = time_to_train + (time.time() - start_time)
+        
+        train_total = total
+        train_correct = correct
 
     def test(epoch):
         global best_acc
+        global test_total
+        global test_correct
         net.eval()
         test_loss = 0
         correct = 0
@@ -135,6 +153,9 @@ with torch.cuda.device(hp.device[0]):
 
                 progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                     % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
+        
+        test_total = total
+        test_correct = correct
         
         # Save checkpoint.
         acc = 100.*correct/total
@@ -174,6 +195,27 @@ with torch.cuda.device(hp.device[0]):
         train(epoch)
         test(epoch)
         
+        epochs.append(epoch)
+        train_accs.append(100.*train_correct/train_total)
+        test_accs.append(100.*test_correct/test_total)
+        
+        plt.plot(epochs, train_accs, epochs, test_accs, 'r-')
+        state = { 'test_acc': test_accs }
+        
+        if not os.path.isdir('result_fig'):
+            os.mkdir('result_fig')
+        
+        if hp.with_lars:
+            plt.title('Resnet50, data=cifar10, With LARS, batch_size: ' + str(hp.batch_size))
+            plt.savefig('./result_fig/withLars-' + str(hp.batch_size) + '.jpg')
+            torch.save(state, './result_fig/withLars-' + str(hp.batch_size) + '.pth')
+        else:
+            plt.title('Resnet50, data=cifar10, Without LARS, batch_size: ' + str(hp.batch_size))
+            plt.savefig('./result_fig/noLars-' + str(hp.batch_size) + '.jpg')
+            torch.save(state, './result_fig/noLars-' + str(hp.batch_size) + '.pth')
+
+    plt.gcf().clear()
+  
 
 
 
