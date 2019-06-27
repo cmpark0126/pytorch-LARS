@@ -468,3 +468,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 ## Appendix
 
 ### val.py 실행 화면
+
+<img src="fig\appendix\run_val.PNG">
+
+- best accuracy가 변해온 history를 확인할 수 있다.
