@@ -59,9 +59,14 @@ with torch.cuda.device(hp.device[0]):
 
     classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
+    def init_weights(m):
+        if type(m) == nn.Linear or type(m) == nn.Conv2d:
+            torch.nn.init.kaiming_uniform_(m.weight)
+    
     # Model
     print('==> Building model..')
     net = models.resnet50()
+    net.apply(init_weights)
     net.cuda()
     net = torch.nn.DataParallel(net, device_ids=hp.device)
     cudnn.benchmark = True
