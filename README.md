@@ -1,4 +1,4 @@
-# Implement LARS
+# Pytorch-LARS
 
 ### Objective
 
@@ -20,7 +20,7 @@ $ python train.py # CIFAR10 학습 시작
 -   Evaluate
 
 ```bash
-$ vi hyperparams.py # 학습을 위해 Hyperparams_for_val class 수정
+$ vi hyperparams.py # 학습 결과 확인을 위해 Hyperparams_for_val class 조정, 특정한 checkpoint를 선택하는 것이 가능
 $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되어온 test accuracy의 history 확인 가능
 ```
 
@@ -30,7 +30,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 
     -   batch_size: 기준 Batch size. 실험에서 사용되는 모든 Batch size는 이 size의 배수 형태로 나타난다.
     -   lr: 기준 learning rate. 일반적으로 linear scailing에서 기준 값으로 사용한다.
-    -   multiples: 아래에서 설면되는 k를 구하기 위한 지수로 사용되는 배수이다.
+    -   multiples: 아래에서 설명되는 k를 구하기 위한 지수로 사용되는 배수이다.
 
 -   Hyperparams (class)
 
@@ -65,10 +65,11 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
         -   we increase the batch B by k
         -   start batch size is 128
         -   if we use 256 as batch size, k is 2 in this time
-        -   `k = (2 ** (multiples - 1))`
+        -   **k = (2 ** (multiples - 1))**
     -   (nan) = nan 발생
+    -   (base line) = target accuracy which we want to get when we train the model using large batch size with LARS
 
-#### Attempt 1 (first trial)
+#### Attempt 1
 
 -   Configuration
 
@@ -100,7 +101,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 
 -   With LARS (trust coefficient = 0.1)
 
-| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line (not the best accuracy) | Time to train |
+| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line<br>(not the best accuracy) | Time to train |
 | :---: | :-----: | :-------------------------------------------------------------------: | :-----------: |
 |  128  |   0.15  |                                89.16 %                                |  3203.54 sec  |
 |  256  |   0.15  |                                89.19 %                                |  2147.74 sec  |
@@ -142,7 +143,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 
 -   With LARS (trust coefficient = 0.1)
 
-| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line (not the best accuracy) | Time to train |
+| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line<br>(not the best accuracy) | Time to train |
 | :---: | :-----: | :-------------------------------------------------------------------: | :-----------: |
 |  128  |   0.05  |                                90.00 %                                |  6792.61 sec  |
 |  256  |   0.05  |                                90.05 %                                |  4506.06 sec  |
@@ -188,7 +189,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 
 -   With LARS (trust coefficient = 0.1)
 
-| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line (not the best accuracy) | Time to train |
+| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line<br>(not the best accuracy) | Time to train |
 | :---: | :-----: | :-------------------------------------------------------------------: | :-----------: |
 |  128  |   0.05  |                                90.11 %                                |  6880.76 sec  |
 |  256  |   0.1   |                                90.12 %                                |  4262.83 sec  |
@@ -234,7 +235,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 
 -   With LARS (trust coefficient = 0.1)
 
-| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line (not the best accuracy) | Time to train |
+| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line<br>(not the best accuracy) | Time to train |
 | :---: | :-----: | :-------------------------------------------------------------------: | :-----------: |
 |  128  |   0.02  |                                90.20 %                                |  6740.03 sec  |
 |  256  |   0.04  |                                90.25 %                                |  4662.09 sec  |
@@ -257,9 +258,9 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
         -   warm-up for 5 epoch
             -   warmup_multiplier = 2
         -   polynomial decay (power=2) LR policy (after warm-up)
-            -   `for 175 epoch`
+            -   **for 175 epoch**
             -   minimum lr = 1e-05 \* k
-        -   `number of epoch = 175`
+        -   **number of epoch = 175**
 
     -   Additional Jobs
 
@@ -280,7 +281,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 
 -   With LARS (trust coefficient = 0.1)
 
-| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line (not the best accuracy) | Time to train |
+| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line<br>(not the best accuracy) | Time to train |
 | :---: | :-----: | :-------------------------------------------------------------------: | :-----------: |
 |  128  |   0.05  |                                                                       |               |
 |  256  |   0.1   |                                                                       |               |
@@ -291,6 +292,31 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 |  8192 |   3.2   |                                                                       |               |
 
 ### Visualization
+
+ <img src="result_fig-attempt4\result_fig-noLARS\noLars-8192.jpg">
+
+ <Fig1. Attempt4, Without LARS, Batch size = 8192>
+
+ <img src="result_fig-attempt4\result_fig-withLARS\withLars-8192.jpg">
+
+ <Fig2. Attempt4, With LARS, Batch size = 8192>
+
+- <Fig1>과 <Fig2>를 비교하면 LARS를 사용할 때, 좀 더 안정적으로 학습을 시작하고, 부드럽게 accuracy가 증가하는 것을 확인할 수 있다.
+
+- Attempt3, 4, 5를 작업하면서 만든 Accuracy 변화율 그래프는 아래 링크에서 확인하는 것이 가능하다.
+    - [Attempt3]()
+    - [Attempt4]()
+    - [Attempt5]()
+
+### Analyze
+
+-   LARS를 사용하면 1024까지의 Batch를 사용해서 모델이 Base line의 성능을 보일 수 있도록 학습하는 것이 가능하다는 것을 확인
+    -   CIFAR10, Resnet50
+-   LARS만을 사용하는 것보다, He initialization을 포함하여 여러 테크닉을 함께 사용하는 것이 중요하다는 것을 확인
+
+### Open Issue
+
+-   LARS를 사용하면 약 두 배 정도 시간이 더 들어가는 것을 확인. 학습 시간을 줄일 수 있는 방안이 있는지 생각해보기
 
 ### Reference
 
