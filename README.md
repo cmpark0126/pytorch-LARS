@@ -437,7 +437,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 
  &lt;Fig2. Attempt4, With LARS, Batch size = 8192>
 
--   \&lt;Fig1>과 \&lt;Fig2>를 비교하면 LARS를 사용할 때, 좀 더 안정적으로 학습을 시작하고, 부드럽게 accuracy가 증가하는 것을 확인할 수 있다.
+-   \<Fig1>과 \<Fig2>를 비교하면 LARS를 사용할 때, 좀 더 안정적으로 학습을 시작하고, 부드럽게 accuracy가 증가하는 것을 확인할 수 있다.
 
 -   Attempt3, 4, 5를 작업하면서 만든 Accuracy 변화율 그래프는 아래 링크에서 확인하는 것이 가능하다.
     -   [Attempt3](https://github.com/cmpark0126/pytorch-LARS/tree/master/fig/result_fig-attempt3)
