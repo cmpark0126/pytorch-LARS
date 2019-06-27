@@ -38,7 +38,7 @@ with torch.cuda.device(hp.device[0]):
         transforms.ToTensor(),
         transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
     ])
-    
+
     num_of_mini_batch = 1 if hp.batch_size <= 8192 else hp.batch_size // 8192 # hp.batch_size must be multiply of 8192
 
     trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
@@ -70,7 +70,7 @@ with torch.cuda.device(hp.device[0]):
         time_to_train = checkpoint['time_to_train']
         basic_info = checkpoint['basic_info']
 
-    # Loss & Optimizer 
+    # Loss & Optimizer
     criterion = nn.CrossEntropyLoss()
     optimizer = None
     if hp.with_lars:
@@ -81,8 +81,10 @@ with torch.cuda.device(hp.device[0]):
         optimizer = optim.SGD(net.parameters(), lr=hp.lr, momentum=hp.momentum, weight_decay=hp.weight_decay)
 
     warmup_scheduler = GradualWarmupScheduler(optimizer=optimizer, multiplier=hp.warmup_multiplier, total_epoch=hp.warmup_epoch)
-    poly_decay_scheduler = PolynomialLRDecay(optimizer=optimizer, max_decay_steps=hp.max_decay_epoch * len(trainloader), 
+    poly_decay_scheduler = PolynomialLRDecay(optimizer=optimizer, max_decay_steps=hp.max_decay_epoch * len(trainloader),
                                              end_learning_rate=hp.end_learning_rate, power=2.0) # poly(2)
+    # step_scheduler = optim.StepLR(optimizer=optimizer, step_size=75, gamma=0.1)
+
     # Training
     def train(epoch):
         net.train()
@@ -170,11 +172,4 @@ with torch.cuda.device(hp.device[0]):
     #         print(param_group['lr'])
         train(epoch)
         test(epoch)
-
-    
-    
-  
-
-
-
-
+    #     step_scheduler.step()
