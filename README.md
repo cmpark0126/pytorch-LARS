@@ -29,22 +29,29 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 -   Base (class)
 
     -   batch_size: 기준 Batch size. 실험에서 사용되는 모든 Batch size는 이 size의 배수 형태로 나타난다.
+
     -   lr: 기준 learning rate. 일반적으로 linear scailing에서 기준 값으로 사용한다.
+
     -   multiples: 아래에서 설명되는 k를 구하기 위한 지수로 사용되는 배수이다.
 
 -   Hyperparams (class)
 
     -   batch_size: 실제 학습에서 사용하는 batch size
+
     -   lr: 실제 학습에서 초기 값으로 사용하는 learning rate
 
     -   momentum
+
     -   weight_decay
+
     -   trust_coef: trust coefficient로 LARS 사용시에 내부에서 구해지는 Local LR의 신뢰도를 의미
 
     -   warmup_multiplier
+
     -   warmup_epoch
 
     -   max_decay_epoch: polynomial decay를 최대한 진행할 epoch 수
+
     -   end_learning_rate: decay 작업이 모두 완료되었을 때 learning rate가 수렴될 값
 
     -   num_of_epoch: 학습을 돌릴 총 epoch 수
@@ -53,9 +60,12 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 
 -   Hyperparams_for_val (class)
 
-    -   checkpoint_folder_name: hyperparams.py와 같은 폴더에는 파라미터를 모아둔 checkpoint folder가 존재해야 하며, 이들 중 하나의 이름을 지정 (eg. checkpoint_folder_name = 'checkpoint-attempt1')
+    -   checkpoint_folder_name: hyperparams.py와 같은 폴더에는 파라미터를 모아둔 checkpoint folder가 존재해야 하며, 이들 중 하나의 이름을 지정(eg. checkpoint_folder_name = 'checkpoint-attempt1')
+
     -   with_lars: checkpoint 중, lars를 사용한 것 혹은 사용하지 않은 것을 선택
+
     -   batch_size: checkpoint 중, 사용한 batch_size 크기를 지정
+
     -   device: evaluation을 위해 모델을 돌릴 때 사용할 cuda device 선택
 
 ### Demonstration
@@ -66,8 +76,10 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
         -   start batch size is 128
         -   if we use 256 as batch size, k is 2 in this time
         -   **k = (2 ** (multiples - 1))**
-    -   (nan) = nan 발생
-    -   (base line) = target accuracy which we want to get when we train the model using large batch size with LARS
+    -   (nan)
+        -   nan 발생
+    -   (base line)
+        -   target accuracy which we want to get when we train the model using large batch size with LARS
 
 #### Attempt 1
 
@@ -304,9 +316,9 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 - <Fig1>과 <Fig2>를 비교하면 LARS를 사용할 때, 좀 더 안정적으로 학습을 시작하고, 부드럽게 accuracy가 증가하는 것을 확인할 수 있다.
 
 - Attempt3, 4, 5를 작업하면서 만든 Accuracy 변화율 그래프는 아래 링크에서 확인하는 것이 가능하다.
-    - [Attempt3]()
-    - [Attempt4]()
-    - [Attempt5]()
+    - [Attempt3](https://github.com/cmpark0126/pytorch-LARS/tree/master/result_fig-attempt3)
+    - [Attempt4](https://github.com/cmpark0126/pytorch-LARS/tree/master/result_fig-attempt4)
+    - [Attempt5](https://github.com/cmpark0126/pytorch-LARS/tree/master/result_fig-attempt5)
 
 ### Analyze
 
