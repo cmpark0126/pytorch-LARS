@@ -11,7 +11,7 @@
 python == 3.6.8
 pytorch >= 1.1.0
 cuda >= 10
-matplotlib > 3.1.0
+matplotlib > 3.1.0 (option)
 etc.
 
 ## Usage
@@ -83,7 +83,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
         -   we increase the batch B by k
         -   start batch size is 128
         -   if we use 256 as batch size, k is 2 in this time
-        -   k = (2 \*\* (multiples - 1))
+        -   **k = (2 \*\* (multiples - 1))**
     -   (base line)
         -   target accuracy which we want to get when we train the model using large batch size with LARS
 
@@ -378,10 +378,10 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 
         -   polynomial decay (power=2) LR policy (after warm-up)
 
-            -   for 175 epoch
+            -   **for 175 epoch**
             -   minimum lr = 1e-05 \* k
 
-        -   number of epoch = 175
+        -   **number of epoch = 175**
 
     -   Additional Jobs
 
@@ -444,23 +444,28 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
     -   [Attempt4](https://github.com/cmpark0126/pytorch-LARS/tree/master/fig/result_fig-attempt4)
     -   [Attempt5](https://github.com/cmpark0126/pytorch-LARS/tree/master/fig/result_fig-attempt5)
 
-## Analyze
+## Analysis of Resnet50 Training With Large Batch (CIFAR10)
 
 -   LARS를 사용하면 1024까지의 Batch를 사용해서 모델이 Base line의 성능을 보일 수 있도록 학습하는 것이 가능하다는 것을 확인
-    -   CIFAR10, Resnet50
+
 -   LARS만을 사용하는 것보다, He initialization을 포함하여 여러 테크닉을 함께 사용하는 것이 중요하다는 것을 확인
+
+-   LARS를 사용하면 단순히 base line을 만족하는 것이 아니라 더 좋은 성능을 보일 수도 있다는 것을 확인
+    - Local learning rate가 vanishing 문제나 exploding gradient 문제를 완화시킨다는 논문의 언급에 따른 부가 효과로 보임
 
 ## Open Issue
 
--   LARS를 사용하면 약 두 배 정도 시간이 더 들어가는 것을 확인. 학습 시간을 줄일 수 있는 방안이 있는지 생각해보기
+-   LARS를 사용하면 약 두 배 정도 시간이 더 들어가는 것을 확인. 학습 시간을 줄일 수 있는 방안이 있는지 찾아보기
 
 ## Reference
 
 -   Base code: <https://github.com/kuangliu/pytorch-cifar>
+
 -   warm-up LR scheduler: <https://github.com/ildoonet/pytorch-gradual-warmup-lr/tree/master/warmup_scheduler>
     -   또한, 이를 기반으로 PolynomialLRDecay class 구현
         -   polynomial LR decay scheduler
     -   참고: scheduler.py
+
 -   Pytorch Doc / Optimizer: <https://pytorch.org/docs/stable/_modules/torch/optim/optimizer.html>
     -   Optimizer class
     -   SGD class
@@ -471,4 +476,4 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 
 <img src="fig\appendix\run_val.PNG">
 
-- best accuracy가 변해온 history를 확인할 수 있다.
+- best accuracy가 update되어 온 history를 확인할 수 있다.
