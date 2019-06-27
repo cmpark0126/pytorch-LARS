@@ -1,12 +1,12 @@
 # Pytorch-LARS
 
-### Objective
+## Objective
 
 -   link: ["Large Batch Training of Convolutional Networks (LARS)"](https://arxiv.org/abs/1708.03888)
 -   위 논문에 소개된 LARS를 PyTorch, CUDA로 구현
 -   Data: CIFAR10
 
-### Usage
+## Usage
 
 -   Train
 
@@ -24,7 +24,7 @@ $ vi hyperparams.py # 학습 결과 확인을 위해 Hyperparams_for_val class �
 $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되어온 test accuracy의 history 확인 가능
 ```
 
-### Hyperparams (hyperparams.py)
+## Hyperparams (hyperparams.py)
 
 -   Base (class)
 
@@ -68,7 +68,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 
     -   device: evaluation을 위해 모델을 돌릴 때 사용할 cuda device 선택
 
-### Demonstration
+## Demonstration
 
 -   Terminology
     -   k
@@ -82,7 +82,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
         -   target accuracy which we want to get when we train the model using large batch size with LARS
 
 ---
-#### Attempt 1
+### Attempt 1
 
 -   Configuration
 
@@ -129,7 +129,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 |  8192 |   0.15  |                                80.85 %                                |  1629.48 sec  |
 
 ---
-#### Attempt 2
+### Attempt 2
 
 -   Configuration
 
@@ -176,7 +176,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 |  8192 |   0.05  |                             10.00 % (nan)                             |     0 sec     |
 
 ---
-#### Attempt 3
+### Attempt 3
 
 -   Configuration
 
@@ -228,7 +228,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 |  8192 |   3.2   |                                86.40 %                                |  3260.45 sec  |
 
 ---
-#### Attempt 4
+### Attempt 4
 
 -   Configuration
 
@@ -280,7 +280,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 |  8192 |   1.28  |                                86.56 %                                |  3314.60 sec  |
 
 ---
-#### Attempt 5
+### Attempt 5
 
 -   Configuration
 
@@ -331,8 +331,8 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 |  4096 |   1.6   |                                                                       |               |
 |  8192 |   3.2   |                                                                       |               |
 
---- 
-### Visualization
+---
+## Visualization
 
  <img src="result_fig-attempt4\result_fig-noLARS\noLars-8192.jpg">
 
@@ -349,17 +349,17 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
     - [Attempt4](https://github.com/cmpark0126/pytorch-LARS/tree/master/result_fig-attempt4)
     - [Attempt5](https://github.com/cmpark0126/pytorch-LARS/tree/master/result_fig-attempt5)
 
-### Analyze
+## Analyze
 
 -   LARS를 사용하면 1024까지의 Batch를 사용해서 모델이 Base line의 성능을 보일 수 있도록 학습하는 것이 가능하다는 것을 확인
     -   CIFAR10, Resnet50
 -   LARS만을 사용하는 것보다, He initialization을 포함하여 여러 테크닉을 함께 사용하는 것이 중요하다는 것을 확인
 
-### Open Issue
+## Open Issue
 
 -   LARS를 사용하면 약 두 배 정도 시간이 더 들어가는 것을 확인. 학습 시간을 줄일 수 있는 방안이 있는지 생각해보기
 
-### Reference
+## Reference
 
 -   Base code: <https://github.com/kuangliu/pytorch-cifar>
 -   warm-up LR scheduler: <https://github.com/ildoonet/pytorch-gradual-warmup-lr/tree/master/warmup_scheduler>
