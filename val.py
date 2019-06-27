@@ -58,7 +58,7 @@ with torch.cuda.device(hp.device[0]):
         total = 0
         with torch.no_grad():
             for batch_idx, (inputs, targets) in enumerate(testloader):
-                inputs, targets = inputs.cuda(device=hp.device), targets.cuda(device=hp.device)
+                inputs, targets = inputs.cuda(), targets.cuda()
                 outputs = net(inputs)
                 loss = criterion(outputs, targets)
 
