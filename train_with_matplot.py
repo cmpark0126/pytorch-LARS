@@ -25,12 +25,12 @@ with torch.cuda.device(hp.device[0]):
     start_epoch = 0  # start from epoch 0 or last checkpoint epoch
     all_times = []
     time_to_train = 0
-    
+
     train_correct = 0
     train_total = 0
     test_correct = 0
     test_total = 0
-    
+
     epochs = []
     train_accs = []
     test_accs = []
@@ -48,8 +48,6 @@ with torch.cuda.device(hp.device[0]):
         transforms.ToTensor(),
         transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
     ])
-    
-    num_of_mini_batch = 1 if hp.batch_size <= 8192 else hp.batch_size // 8192 # hp.batch_size must be multiply of 8192
 
     trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=hp.batch_size, shuffle=True, num_workers=2)
@@ -62,7 +60,7 @@ with torch.cuda.device(hp.device[0]):
     def init_weights(m):
         if type(m) == nn.Linear or type(m) == nn.Conv2d:
             torch.nn.init.kaiming_uniform_(m.weight)
-    
+
     # Model
     print('==> Building model..')
     net = models.resnet50()
@@ -85,7 +83,7 @@ with torch.cuda.device(hp.device[0]):
         time_to_train = checkpoint['time_to_train']
         basic_info = checkpoint['basic_info']
 
-    # Loss & Optimizer 
+    # Loss & Optimizer
     criterion = nn.CrossEntropyLoss()
     optimizer = None
     if hp.with_lars:
@@ -96,9 +94,9 @@ with torch.cuda.device(hp.device[0]):
         optimizer = optim.SGD(net.parameters(), lr=hp.lr, momentum=hp.momentum, weight_decay=hp.weight_decay)
 
     warmup_scheduler = GradualWarmupScheduler(optimizer=optimizer, multiplier=hp.warmup_multiplier, total_epoch=hp.warmup_epoch)
-    poly_decay_scheduler = PolynomialLRDecay(optimizer=optimizer, max_decay_steps=hp.max_decay_epoch * len(trainloader), 
+    poly_decay_scheduler = PolynomialLRDecay(optimizer=optimizer, max_decay_steps=hp.max_decay_epoch * len(trainloader),
                                              end_learning_rate=hp.end_learning_rate, power=2.0) # poly(2)
-    
+
     # Training
     def train(epoch):
         global train_total
@@ -128,7 +126,7 @@ with torch.cuda.device(hp.device[0]):
             progress_bar(batch_idx, len(trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                 % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
         time_to_train = time_to_train + (time.time() - start_time)
-        
+
         train_total = total
         train_correct = correct
 
@@ -153,10 +151,10 @@ with torch.cuda.device(hp.device[0]):
 
                 progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                     % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
-        
+
         test_total = total
         test_correct = correct
-        
+
         # Save checkpoint.
         acc = 100.*correct/total
         if acc > best_acc:
@@ -194,17 +192,17 @@ with torch.cuda.device(hp.device[0]):
             print('lr: ' + str(param_group['lr']))
         train(epoch)
         test(epoch)
-        
+
         epochs.append(epoch)
         train_accs.append(100.*train_correct/train_total)
         test_accs.append(100.*test_correct/test_total)
-        
+
         plt.plot(epochs, train_accs, epochs, test_accs, 'r-')
         state = { 'test_acc': test_accs }
-        
+
         if not os.path.isdir('result_fig'):
             os.mkdir('result_fig')
-        
+
         if hp.with_lars:
             plt.title('Resnet50, data=cifar10, With LARS, batch_size: ' + str(hp.batch_size))
             plt.savefig('./result_fig/withLars-' + str(hp.batch_size) + '.jpg')
@@ -215,8 +213,3 @@ with torch.cuda.device(hp.device[0]):
             torch.save(state, './result_fig/noLars-' + str(hp.batch_size) + '.pth')
 
     plt.gcf().clear()
-  
-
-
-
-
