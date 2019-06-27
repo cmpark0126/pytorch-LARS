@@ -212,7 +212,7 @@ with torch.cuda.device(hp.device[0]):
         if hp.with_lars:
             plt.title('Resnet50, data=cifar10, With LARS, batch_size: ' + str(hp.batch_size))
             plt.savefig('./result_fig/withLars-' + str(hp.batch_size) + '.jpg')
-            torch.save(state, './result_fig/noLars-' + str(hp.batch_size) + '.pth')
+            torch.save(state, './result_fig/withLars-' + str(hp.batch_size) + '.pth')
         else:
             plt.title('Resnet50, data=cifar10, Without LARS, batch_size: ' + str(hp.batch_size))
             plt.savefig('./result_fig/noLars-' + str(hp.batch_size) + '.jpg')
