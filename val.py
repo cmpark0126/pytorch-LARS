@@ -12,7 +12,7 @@ import torchvision.models as models
 import os
 import argparse
 
-from hyperparams import Hyperparams as hp
+from hyperparams import Hyperparams_for_val as hp
 from utils import progress_bar
 
 with torch.cuda.device(hp.device[0]):
@@ -39,9 +39,9 @@ with torch.cuda.device(hp.device[0]):
     print('==> Resuming from checkpoint..')
     assert os.path.isdir('checkpoint'), 'Error: no checkpoint directory found!'
     if hp.with_lars:
-        checkpoint = torch.load('./checkpoint/withLars-' + str(hp.batch_size) + '.pth')
+        checkpoint = torch.load('./' + hp.checkpoint_folder_name + '/withLars-' + str(hp.batch_size) + '.pth')
     else:
-        checkpoint = torch.load('./checkpoint/noLars-' + str(hp.batch_size) + '.pth')
+        checkpoint = torch.load('./' + hp.checkpoint_folder_name + '/noLars-' + str(hp.batch_size) + '.pth')
     net.load_state_dict(checkpoint['net'])
     best_acc = checkpoint['acc']
     epoch = checkpoint['epoch']

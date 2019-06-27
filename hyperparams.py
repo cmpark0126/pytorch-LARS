@@ -8,8 +8,7 @@ class Base:
 
 class Hyperparams:
     '''Hyper parameters'''
-    device = [Base.multiples - 1]
-#     device = [7]
+    device = [Base.multiples-1]
     
     batch_size = Base.batch_size * (2 ** (Base.multiples - 1))
     lr = Base.lr * (2 ** (Base.multiples - 1))
@@ -19,18 +18,18 @@ class Hyperparams:
     trust_coef = 0.1
     
     # warm-up step & Linear Scaling Rule
-    warmup_multiplier = 2
+    warmup_multiplier = 2 
     warmup_epoch = 5
     
-    # decay lr step
-    max_decay_epoch = 200
+    # decay lr step (polynomial)
+    max_decay_epoch = 175
     end_learning_rate = 0.0001 * Base.lr * 2 * (2 ** (Base.multiples - 1))
 
 #     # step rule (for LR decay)
 #     step_size = 50
 #     gamma = 0.1
     
-    num_of_epoch = 200
+    num_of_epoch = 175
     
     resume = False
     
@@ -72,3 +71,9 @@ class Hyperparams:
                      resume=Hyperparams.resume, 
                      with_lars=Hyperparams.with_lars, 
                      weight_decay=Hyperparams.weight_decay)
+    
+class Hyperparams_for_val:
+    batch_size = 128
+    checkpoint_folder_name = 'checkpoint-attempt4'
+    with_lars = False
+    device = [7]
