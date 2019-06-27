@@ -37,7 +37,7 @@ with torch.cuda.device(hp.device[0]):
 
     # Load checkpoint.
     print('==> Resuming from checkpoint..')
-    assert os.path.isdir('checkpoint'), 'Error: no checkpoint directory found!'
+    assert os.path.isdir(hp.checkpoint_folder_name), 'Error: no checkpoint directory found!'
     if hp.with_lars:
         checkpoint = torch.load('./' + hp.checkpoint_folder_name + '/withLars-' + str(hp.batch_size) + '.pth')
     else:
