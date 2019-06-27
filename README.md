@@ -75,7 +75,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
         -   we increase the batch B by k
         -   start batch size is 128
         -   if we use 256 as batch size, k is 2 in this time
-        -   **k = (2 ** (multiples - 1))**
+        -   k = (2 ** (multiples - 1))
     -   (nan)
         -   nan 발생
     -   (base line)
@@ -88,15 +88,19 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
     -   Hyperparams
 
         -   momentum = 0.9
+
         -   weigth_decay
             -   noLars -> 5e-04
             -   withLARS -> 5e-03
+
         -   warm-up for 5 epoch
             -   warmup_multiplier = k
             -   target lr follows linear scailing rule
+
         -   polynomial decay (power=2) LR policy (after warm-up)
             -   for 200 epoch
             -   minimum lr = 1.5e-05 \* k
+
         -   number of epoch = 200
 
 -   Without LARS
@@ -130,15 +134,19 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
     -   Hyperparams
 
         -   momentum = 0.9
+
         -   weigth_decay
             -   noLars -> 5e-04
             -   withLARS -> 5e-03
+
         -   warm-up for 5 epoch
             -   warmup_multiplier = 2 \* k
             -   target lr follows linear scailing rule
+
         -   polynomial decay (power=2) LR policy (after warm-up)
             -   for 200 epoch
             -   minimum lr = 1e-05
+
         -   number of epoch = 200
 
 -   Without LARS
@@ -172,19 +180,24 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
     -   Hyperparams
 
         -   momentum = 0.9
+
         -   weigth_decay
             -   noLars -> 5e-04
             -   withLARS -> 5e-03
+
         -   warm-up for 5 epoch
             -   warmup_multiplier = 2
+
         -   polynomial decay (power=2) LR policy (after warm-up)
             -   for 200 epoch
             -   minimum lr = 1e-05 \* k
+
         -   number of epoch = 200
 
     -   Additional Jobs
 
         -   Use He initialization
+
         -   base lr은 linear scailing rule에 따라 조정
 
 -   Without LARS
@@ -218,19 +231,24 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
     -   Hyperparams
 
         -   momentum = 0.9
+
         -   weigth_decay
             -   noLars -> 5e-04
             -   withLARS -> 5e-03
+
         -   warm-up for 5 epoch
             -   warmup_multiplier = 5
+
         -   polynomial decay (power=2) LR policy (after warm-up)
             -   for 200 epoch
             -   minimum lr = 1e-05 \* k
+
         -   number of epoch = 200
 
     -   Additional Jobs
 
         -   Use He initialization
+
         -   base lr은 linear scailing rule에 따라 조정
 
 -   Without LARS
@@ -264,19 +282,24 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
     -   Hyperparams
 
         -   momentum = 0.9
+
         -   weigth_decay
             -   noLars -> 5e-04
             -   withLARS -> 5e-03
+
         -   warm-up for 5 epoch
             -   warmup_multiplier = 2
+
         -   polynomial decay (power=2) LR policy (after warm-up)
-            -   **for 175 epoch**
+            -   for 175 epoch
             -   minimum lr = 1e-05 \* k
-        -   **number of epoch = 175**
+
+        -   number of epoch = 175
 
     -   Additional Jobs
 
         -   Use He initialization
+
         -   base lr은 linear scailing rule에 따라 조정
 
 -   Without LARS
