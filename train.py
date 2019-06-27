@@ -199,9 +199,9 @@ with torch.cuda.device(hp.device[0]):
         test_accs.append(100.*test_correct/test_total)
         
         plt.plot(epochs, train_accs, epochs, test_accs, 'r-')
-        print(epochs)
-        print(train_accs)
-        print(test_accs)
+#         print(epochs)
+#         print(train_accs)
+#         print(test_accs)
         
         if not os.path.isdir('result_fig'):
             os.mkdir('result_fig')
