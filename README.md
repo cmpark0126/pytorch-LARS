@@ -3,17 +3,25 @@
 ### Objective
 
 -   link: ["Large Batch Training of Convolutional Networks (LARS)"](https://arxiv.org/abs/1708.03888)
--   위 논문에 소개된 LARS를 PyTorch로 구현
+-   위 논문에 소개된 LARS를 PyTorch, CUDA로 구현
 -   Data: CIFAR10
 
 ### Usage
 
+-   Train
+
 ```bash
 $ git clone https://github.com/cmpark0126/pytorch-LARS.git
 $ cd pytorch-LARS/
-$ vi hyperparams.py # hyperparameter 및 config용 요소 확인. 필요시 수정 가능
+$ vi hyperparams.py # 학습을 위해 Basic, Hyperparams class 수정
 $ python train.py # CIFAR10 학습 시작
-$ python val.py # 학습 결과 확인
+```
+
+-   Evaluate
+
+```bash
+$ vi hyperparams.py # 학습을 위해 Hyperparams_for_val class 수정
+$ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되어온 test accuracy의 history 확인 가능
 ```
 
 ### Hyperparams (hyperparams.py)
@@ -42,6 +50,13 @@ $ python val.py # 학습 결과 확인
     -   num_of_epoch: 학습을 돌릴 총 epoch 수
 
     -   with_lars
+
+-   Hyperparams_for_val (class)
+
+    -   checkpoint_folder_name: hyperparams.py와 같은 폴더에는 파라미터를 모아둔 checkpoint folder가 존재해야 하며, 이들 중 하나의 이름을 지정 (eg. checkpoint_folder_name = 'checkpoint-attempt1')
+    -   with_lars: checkpoint 중, lars를 사용한 것 혹은 사용하지 않은 것을 선택
+    -   batch_size: checkpoint 중, 사용한 batch_size 크기를 지정
+    -   device: evaluation을 위해 모델을 돌릴 때 사용할 cuda device 선택
 
 ### Demonstration
 
@@ -85,15 +100,15 @@ $ python val.py # 학습 결과 확인
 
 -   With LARS (trust coefficient = 0.1)
 
-| Batch | Base LR | top-1 Accuracy, % | Time to train |
-| :---: | :-----: | :---------------: | :-----------: |
-|  128  |   0.15  |      89.16 %      |  3203.54 sec  |
-|  256  |   0.15  |      89.19 %      |  2147.74 sec  |
-|  512  |   0.15  |      89.29 %      |  1677.25 sec  |
-|  1024 |   0.15  |      89.17 %      |  1604.91 sec  |
-|  2048 |   0.15  |      88.70 %      |  1413.10 sec  |
-|  4096 |   0.15  |      86.78 %      |  1609.08 sec  |
-|  8192 |   0.15  |      80.85 %      |  1629.48 sec  |
+| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line (not the best accuracy) | Time to train |
+| :---: | :-----: | :-------------------------------------------------------------------: | :-----------: |
+|  128  |   0.15  |                                89.16 %                                |  3203.54 sec  |
+|  256  |   0.15  |                                89.19 %                                |  2147.74 sec  |
+|  512  |   0.15  |                                89.29 %                                |  1677.25 sec  |
+|  1024 |   0.15  |                                89.17 %                                |  1604.91 sec  |
+|  2048 |   0.15  |                                88.70 %                                |  1413.10 sec  |
+|  4096 |   0.15  |                                86.78 %                                |  1609.08 sec  |
+|  8192 |   0.15  |                                80.85 %                                |  1629.48 sec  |
 
 #### Attempt 2
 
@@ -127,15 +142,15 @@ $ python val.py # 학습 결과 확인
 
 -   With LARS (trust coefficient = 0.1)
 
-| Batch | Base LR | top-1 Accuracy, % | Time to train |
-| :---: | :-----: | :---------------: | :-----------: |
-|  128  |   0.05  |      90.00 %      |  6792.61 sec  |
-|  256  |   0.05  |      90.05 %      |  4506.06 sec  |
-|  512  |   0.05  |      90.04 %      |  3329.19 sec  |
-|  1024 |   0.05  |      90.11 %      |  2954.45 sec  |
-|  2048 |   0.05  |      90.19 %      |  2773.21 sec  |
-|  4096 |   0.05  |      88.49 %      |  2866.02 sec  |
-|  8192 |   0.05  |   10.00 % (nan)   |     0 sec     |
+| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line (not the best accuracy) | Time to train |
+| :---: | :-----: | :-------------------------------------------------------------------: | :-----------: |
+|  128  |   0.05  |                                90.00 %                                |  6792.61 sec  |
+|  256  |   0.05  |                                90.05 %                                |  4506.06 sec  |
+|  512  |   0.05  |                                90.04 %                                |  3329.19 sec  |
+|  1024 |   0.05  |                                90.11 %                                |  2954.45 sec  |
+|  2048 |   0.05  |                                90.19 %                                |  2773.21 sec  |
+|  4096 |   0.05  |                                88.49 %                                |  2866.02 sec  |
+|  8192 |   0.05  |                             10.00 % (nan)                             |     0 sec     |
 
 #### Attempt 3
 
@@ -173,15 +188,15 @@ $ python val.py # 학습 결과 확인
 
 -   With LARS (trust coefficient = 0.1)
 
-| Batch | Base LR | top-1 Accuracy, % | Time to train |
-| :---: | :-----: | :---------------: | :-----------: |
-|  128  |   0.05  |      90.11 %      |  6880.76 sec  |
-|  256  |   0.1   |      90.12 %      |  4262.83 sec  |
-|  512  |   0.2   |      90.11 %      |  3475.73 sec  |
-|  1024 |   0.4   |      90.02 %      |  2760.31 sec  |
-|  2048 |   0.8   |      90.02 %      |  2777.70 sec  |
-|  4096 |   1.6   |      88.38 %      |  2946.53 sec  |
-|  8192 |   3.2   |      86.40 %      |  3260.45 sec  |
+| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line (not the best accuracy) | Time to train |
+| :---: | :-----: | :-------------------------------------------------------------------: | :-----------: |
+|  128  |   0.05  |                                90.11 %                                |  6880.76 sec  |
+|  256  |   0.1   |                                90.12 %                                |  4262.83 sec  |
+|  512  |   0.2   |                                90.11 %                                |  3475.73 sec  |
+|  1024 |   0.4   |                                90.02 %                                |  2760.31 sec  |
+|  2048 |   0.8   |                                90.02 %                                |  2777.70 sec  |
+|  4096 |   1.6   |                                88.38 %                                |  2946.53 sec  |
+|  8192 |   3.2   |                                86.40 %                                |  3260.45 sec  |
 
 #### Attempt 4
 
@@ -219,15 +234,15 @@ $ python val.py # 학습 결과 확인
 
 -   With LARS (trust coefficient = 0.1)
 
-| Batch | Base LR | top-1 Accuracy, % | Time to train |
-| :---: | :-----: | :---------------: | :-----------: |
-|  128  |   0.02  |      90.20 %      |  6740.03 sec  |
-|  256  |   0.04  |      90.25 %      |  4662.09 sec  |
-|  512  |   0.08  |      90.24 %      |  3381.99 sec  |
-|  1024 |   0.16  |      90.07 %      |  2929.32 sec  |
-|  2048 |   0.32  |      89.82 %      |  2908.37 sec  |
-|  4096 |   0.64  |      88.09 %      |  2980.63 sec  |
-|  8192 |   1.28  |      86.56 %      |  3314.60 sec  |
+| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line (not the best accuracy) | Time to train |
+| :---: | :-----: | :-------------------------------------------------------------------: | :-----------: |
+|  128  |   0.02  |                                90.20 %                                |  6740.03 sec  |
+|  256  |   0.04  |                                90.25 %                                |  4662.09 sec  |
+|  512  |   0.08  |                                90.24 %                                |  3381.99 sec  |
+|  1024 |   0.16  |                                90.07 %                                |  2929.32 sec  |
+|  2048 |   0.32  |                                89.82 %                                |  2908.37 sec  |
+|  4096 |   0.64  |                                88.09 %                                |  2980.63 sec  |
+|  8192 |   1.28  |                                86.56 %                                |  3314.60 sec  |
 
 #### Attempt 5
 
@@ -265,15 +280,15 @@ $ python val.py # 학습 결과 확인
 
 -   With LARS (trust coefficient = 0.1)
 
-| Batch | Base LR | top-1 Accuracy, % | Time to train |
-| :---: | :-----: | :---------------: | :-----------: |
-|  128  |   0.05  |                   |               |
-|  256  |   0.1   |                   |               |
-|  512  |   0.2   |                   |               |
-|  1024 |   0.4   |                   |               |
-|  2048 |   0.8   |                   |               |
-|  4096 |   1.6   |                   |               |
-|  8192 |   3.2   |                   |               |
+| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line (not the best accuracy) | Time to train |
+| :---: | :-----: | :-------------------------------------------------------------------: | :-----------: |
+|  128  |   0.05  |                                                                       |               |
+|  256  |   0.1   |                                                                       |               |
+|  512  |   0.2   |                                                                       |               |
+|  1024 |   0.4   |                                                                       |               |
+|  2048 |   0.8   |                                                                       |               |
+|  4096 |   1.6   |                                                                       |               |
+|  8192 |   3.2   |                                                                       |               |
 
 ### Visualization
 
