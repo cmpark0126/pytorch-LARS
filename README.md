@@ -81,6 +81,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
     -   (base line)
         -   target accuracy which we want to get when we train the model using large batch size with LARS
 
+---
 #### Attempt 1
 
 -   Configuration
@@ -127,6 +128,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 |  4096 |   0.15  |                                86.78 %                                |  1609.08 sec  |
 |  8192 |   0.15  |                                80.85 %                                |  1629.48 sec  |
 
+---
 #### Attempt 2
 
 -   Configuration
@@ -173,6 +175,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 |  4096 |   0.05  |                                88.49 %                                |  2866.02 sec  |
 |  8192 |   0.05  |                             10.00 % (nan)                             |     0 sec     |
 
+---
 #### Attempt 3
 
 -   Configuration
@@ -224,6 +227,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 |  4096 |   1.6   |                                88.38 %                                |  2946.53 sec  |
 |  8192 |   3.2   |                                86.40 %                                |  3260.45 sec  |
 
+---
 #### Attempt 4
 
 -   Configuration
@@ -275,6 +279,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 |  4096 |   0.64  |                                88.09 %                                |  2980.63 sec  |
 |  8192 |   1.28  |                                86.56 %                                |  3314.60 sec  |
 
+---
 #### Attempt 5
 
 -   Configuration
@@ -326,6 +331,7 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 |  4096 |   1.6   |                                                                       |               |
 |  8192 |   3.2   |                                                                       |               |
 
+--- 
 ### Visualization
 
  <img src="result_fig-attempt4\result_fig-noLARS\noLars-8192.jpg">
