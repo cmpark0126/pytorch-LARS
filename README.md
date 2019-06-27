@@ -8,11 +8,11 @@
 
 ## Requirements
 
-python == 3.6.8
-pytorch >= 1.1.0
-cuda >= 10
-matplotlib > 3.1.0 (option)
-etc.
+- python == 3.6.8
+- pytorch >= 1.1.0
+- cuda >= 10
+- matplotlib > 3.1.0 (option)
+- etc.
 
 ## Usage
 
