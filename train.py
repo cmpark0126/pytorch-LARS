@@ -98,7 +98,6 @@ with torch.cuda.device(hp.device[0]):
     warmup_scheduler = GradualWarmupScheduler(optimizer=optimizer, multiplier=hp.warmup_multiplier, total_epoch=hp.warmup_epoch)
     poly_decay_scheduler = PolynomialLRDecay(optimizer=optimizer, max_decay_steps=hp.max_decay_epoch * len(trainloader), 
                                              end_learning_rate=hp.end_learning_rate, power=2.0) # poly(2)
-#     step_scheduler = optim.lr_scheduler.StepLR(optimizer=optimizer, step_size=hp.step_size, gamma=hp.gamma)
     
     # Training
     def train(epoch):
@@ -114,8 +113,6 @@ with torch.cuda.device(hp.device[0]):
         for batch_idx, (inputs, targets) in enumerate(trainloader):
             if epoch > hp.warmup_epoch: # after warmup schduler step
                 poly_decay_scheduler.step()
-    #             for param_group in optimizer.param_groups:
-    #                 print(param_group['lr'])
             inputs, targets = inputs.cuda(), targets.cuda()
             optimizer.zero_grad()
             outputs = net(inputs)
@@ -197,7 +194,6 @@ with torch.cuda.device(hp.device[0]):
             print('lr: ' + str(param_group['lr']))
         train(epoch)
         test(epoch)
-#         step_scheduler.step()
         
         epochs.append(epoch)
         train_accs.append(100.*train_correct/train_total)

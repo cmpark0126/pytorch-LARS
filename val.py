@@ -45,7 +45,7 @@ with torch.cuda.device(hp.device[0]):
     net.load_state_dict(checkpoint['net'])
     best_acc = checkpoint['acc']
     epoch = checkpoint['epoch']
-    time_to_train = checkpoint['time_to_train'] # after 2nd
+    time_to_train = checkpoint['time_to_train'] # after 2nd 
     basic_info = checkpoint['basic_info'] # after 3rd
 
     criterion = nn.CrossEntropyLoss()
@@ -78,6 +78,8 @@ with torch.cuda.device(hp.device[0]):
     print('basic_info=' + str(basic_info))
 
     for epo, acc, time in zip(epoch, best_acc, time_to_train):
-        print (str(epo) + ' epoch : ' + str(acc) + ' % : ' + str(time) + ' sec')
-
+        print (str(epo) + ' epoch | ' + str(acc) + ' % | ' + str(time) + ' sec')
+    
     test()
+    
+
