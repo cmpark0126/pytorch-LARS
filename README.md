@@ -7,6 +7,7 @@
 -   Data: CIFAR10
 
 ## Requirements
+
 python == 3.6.8
 pytorch >= 1.1.0
 cuda >= 10
@@ -82,13 +83,12 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
         -   we increase the batch B by k
         -   start batch size is 128
         -   if we use 256 as batch size, k is 2 in this time
-        -   k = (2 ** (multiples - 1))
-    -   (nan)
-        -   nan 발생
+        -   k = (2 \*\* (multiples - 1))
     -   (base line)
         -   target accuracy which we want to get when we train the model using large batch size with LARS
 
----
+* * *
+
 ### Attempt 1
 
 -   Configuration
@@ -98,14 +98,17 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
         -   momentum = 0.9
 
         -   weigth_decay
+
             -   noLars -> 5e-04
             -   withLARS -> 5e-03
 
         -   warm-up for 5 epoch
+
             -   warmup_multiplier = k
             -   target lr follows linear scailing rule
 
         -   polynomial decay (power=2) LR policy (after warm-up)
+
             -   for 200 epoch
             -   minimum lr = 1.5e-05 \* k
 
@@ -123,19 +126,32 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 |  4096 |   0.15  |         78.03 %        |  2083.24 sec  |
 |  8192 |   0.15  |         14.59 %        |  1459.81 sec  |
 
--   With LARS (trust coefficient = 0.1)
+-   With LARS (closest one to base line, for comparing time to train)
 
-| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line<br>(not the best accuracy) | Time to train |
-| :---: | :-----: | :-------------------------------------------------------------------: | :-----------: |
-|  128  |   0.15  |                                89.16 %                                |  3203.54 sec  |
-|  256  |   0.15  |                                89.19 %                                |  2147.74 sec  |
-|  512  |   0.15  |                                89.29 %                                |  1677.25 sec  |
-|  1024 |   0.15  |                                89.17 %                                |  1604.91 sec  |
-|  2048 |   0.15  |                                88.70 %                                |  1413.10 sec  |
-|  4096 |   0.15  |                                86.78 %                                |  1609.08 sec  |
-|  8192 |   0.15  |                                80.85 %                                |  1629.48 sec  |
+| Batch | Base LR | top-1 Accuracy, % | Time to train |
+| :---: | :-----: | :---------------: | :-----------: |
+|  128  |   0.15  |      89.16 %      |  3203.54 sec  |
+|  256  |   0.15  |      89.19 %      |  2147.74 sec  |
+|  512  |   0.15  |      89.29 %      |  1677.25 sec  |
+|  1024 |   0.15  |      89.17 %      |  1604.91 sec  |
+|  2048 |   0.15  |      88.70 %      |  1413.10 sec  |
+|  4096 |   0.15  |      86.78 %      |  1609.08 sec  |
+|  8192 |   0.15  |      80.85 %      |  1629.48 sec  |
 
----
+-   With LARS (best accuracy)
+
+| Batch | Base LR | top-1 Accuracy, % | Time to train |
+| :---: | :-----: | :---------------: | :-----------: |
+|  128  |   0.15  |      89.62 %      |  3606.08 sec  |
+|  256  |   0.15  |      89.78 %      |  2675.04 sec  |
+|  512  |   0.15  |      89.38 %      |  1712.90 sec  |
+|  1024 |   0.15  |      89.22 %      |  1967.92 sec  |
+|  2048 |   0.15  |      88.70 %      |  1413.10 sec  |
+|  4096 |   0.15  |      86.78 %      |  1609.08 sec  |
+|  8192 |   0.15  |      80.85 %      |  1629.48 sec  |
+
+* * *
+
 ### Attempt 2
 
 -   Configuration
@@ -145,14 +161,19 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
         -   momentum = 0.9
 
         -   weigth_decay
+
             -   noLars -> 5e-04
             -   withLARS -> 5e-03
 
+        -   trust coefficient = 0.1
+
         -   warm-up for 5 epoch
+
             -   warmup_multiplier = 2 \* k
             -   target lr follows linear scailing rule
 
         -   polynomial decay (power=2) LR policy (after warm-up)
+
             -   for 200 epoch
             -   minimum lr = 1e-05
 
@@ -170,19 +191,32 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 |  4096 |   0.05  |         84.73 %        |  2872.25 sec  |
 |  8192 |   0.05  |         20.85 %        |  2923.95 sec  |
 
--   With LARS (trust coefficient = 0.1)
+-   With LARS (closest one to base line, for comparing time to train)
 
-| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line<br>(not the best accuracy) | Time to train |
-| :---: | :-----: | :-------------------------------------------------------------------: | :-----------: |
-|  128  |   0.05  |                                90.00 %                                |  6792.61 sec  |
-|  256  |   0.05  |                                90.05 %                                |  4506.06 sec  |
-|  512  |   0.05  |                                90.04 %                                |  3329.19 sec  |
-|  1024 |   0.05  |                                90.11 %                                |  2954.45 sec  |
-|  2048 |   0.05  |                                90.19 %                                |  2773.21 sec  |
-|  4096 |   0.05  |                                88.49 %                                |  2866.02 sec  |
-|  8192 |   0.05  |                             10.00 % (nan)                             |     0 sec     |
+| Batch | Base LR | top-1 Accuracy, % | Time to train |
+| :---: | :-----: | :---------------: | :-----------: |
+|  128  |   0.05  |      90.00 %      |  6792.61 sec  |
+|  256  |   0.05  |      90.05 %      |  4506.06 sec  |
+|  512  |   0.05  |      90.04 %      |  3329.19 sec  |
+|  1024 |   0.05  |      90.11 %      |  2954.45 sec  |
+|  2048 |   0.05  |      90.19 %      |  2773.21 sec  |
+|  4096 |   0.05  |      88.49 %      |  2866.02 sec  |
+|  8192 |   0.05  |      62.20 %      |  1312.98 sec  |
 
----
+-   With LARS (best accuracy)
+
+| Batch | Base LR | top-1 Accuracy, % | Time to train |
+| :---: | :-----: | :---------------: | :-----------: |
+|  128  |   0.05  |      90.21 %      |  6792.61 sec  |
+|  256  |   0.05  |      90.28 %      |  4871.68 sec  |
+|  512  |   0.05  |      90.41 %      |  3581.32 sec  |
+|  1024 |   0.05  |      90.27 %      |  3030.45 sec  |
+|  2048 |   0.05  |      90.19 %      |  2773.21 sec  |
+|  4096 |   0.05  |      88.49 %      |  2866.02 sec  |
+|  8192 |   0.05  |      62.20 %      |  1312.98 sec  |
+
+* * *
+
 ### Attempt 3
 
 -   Configuration
@@ -192,13 +226,18 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
         -   momentum = 0.9
 
         -   weigth_decay
+
             -   noLars -> 5e-04
             -   withLARS -> 5e-03
 
+        -   trust coefficient = 0.1
+
         -   warm-up for 5 epoch
+
             -   warmup_multiplier = 2
 
         -   polynomial decay (power=2) LR policy (after warm-up)
+
             -   for 200 epoch
             -   minimum lr = 1e-05 \* k
 
@@ -222,19 +261,32 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 |  4096 |   1.6   |         85.02 %        |  2871.04 sec  |
 |  8192 |   3.2   |         77.72 %        |  3195.90 sec  |
 
--   With LARS (trust coefficient = 0.1)
+-   With LARS (closest one to base line, for comparing time to train)
 
-| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line<br>(not the best accuracy) | Time to train |
-| :---: | :-----: | :-------------------------------------------------------------------: | :-----------: |
-|  128  |   0.05  |                                90.11 %                                |  6880.76 sec  |
-|  256  |   0.1   |                                90.12 %                                |  4262.83 sec  |
-|  512  |   0.2   |                                90.11 %                                |  3475.73 sec  |
-|  1024 |   0.4   |                                90.02 %                                |  2760.31 sec  |
-|  2048 |   0.8   |                                90.02 %                                |  2777.70 sec  |
-|  4096 |   1.6   |                                88.38 %                                |  2946.53 sec  |
-|  8192 |   3.2   |                                86.40 %                                |  3260.45 sec  |
+| Batch | Base LR | top-1 Accuracy, % | Time to train |
+| :---: | :-----: | :---------------: | :-----------: |
+|  128  |   0.05  |      90.11 %      |  6880.76 sec  |
+|  256  |   0.1   |      90.12 %      |  4262.83 sec  |
+|  512  |   0.2   |      90.11 %      |  3548.07 sec  |
+|  1024 |   0.4   |      90.02 %      |  2760.31 sec  |
+|  2048 |   0.8   |      90.02 %      |  2777.70 sec  |
+|  4096 |   1.6   |      88.38 %      |  2946.53 sec  |
+|  8192 |   3.2   |      86.40 %      |  3260.45 sec  |
 
----
+-   With LARS (best accuracy)
+
+| Batch | Base LR | top-1 Accuracy, % | Time to train |
+| :---: | :-----: | :---------------: | :-----------: |
+|  128  |   0.05  |      90.37 %      |  7338.71 sec  |
+|  256  |   0.1   |      90.32 %      |  4590.58 sec  |
+|  512  |   0.2   |      90.11 %      |  3548.07 sec  |
+|  1024 |   0.4   |      90.50 %      |  2897.45 sec  |
+|  2048 |   0.8   |      90.09 %      |  2877.81 sec  |
+|  4096 |   1.6   |      88.38 %      |  2946.53 sec  |
+|  8192 |   3.2   |      86.40 %      |  3260.45 sec  |
+
+* * *
+
 ### Attempt 4
 
 -   Configuration
@@ -244,13 +296,18 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
         -   momentum = 0.9
 
         -   weigth_decay
+
             -   noLars -> 5e-04
             -   withLARS -> 5e-03
 
+        -   trust coefficient = 0.1
+
         -   warm-up for 5 epoch
+
             -   warmup_multiplier = 5
 
         -   polynomial decay (power=2) LR policy (after warm-up)
+
             -   for 200 epoch
             -   minimum lr = 1e-05 \* k
 
@@ -274,19 +331,32 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 |  4096 |   0.64  |         85.13 %        |  2872.76 sec  |
 |  8192 |   1.28  |         75.99 %        |  3226.53 sec  |
 
--   With LARS (trust coefficient = 0.1)
+-   With LARS (closest one to base line, for comparing time to train)
 
-| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line<br>(not the best accuracy) | Time to train |
-| :---: | :-----: | :-------------------------------------------------------------------: | :-----------: |
-|  128  |   0.02  |                                90.20 %                                |  6740.03 sec  |
-|  256  |   0.04  |                                90.25 %                                |  4662.09 sec  |
-|  512  |   0.08  |                                90.24 %                                |  3381.99 sec  |
-|  1024 |   0.16  |                                90.07 %                                |  2929.32 sec  |
-|  2048 |   0.32  |                                89.82 %                                |  2908.37 sec  |
-|  4096 |   0.64  |                                88.09 %                                |  2980.63 sec  |
-|  8192 |   1.28  |                                86.56 %                                |  3314.60 sec  |
+| Batch | Base LR | top-1 Accuracy, % | Time to train |
+| :---: | :-----: | :---------------: | :-----------: |
+|  128  |   0.02  |      90.20 %      |  6740.03 sec  |
+|  256  |   0.04  |      90.25 %      |  4662.09 sec  |
+|  512  |   0.08  |      90.24 %      |  3381.99 sec  |
+|  1024 |   0.16  |      90.07 %      |  2929.32 sec  |
+|  2048 |   0.32  |      89.82 %      |  2908.37 sec  |
+|  4096 |   0.64  |      88.09 %      |  2980.63 sec  |
+|  8192 |   1.28  |      86.56 %      |  3314.60 sec  |
 
----
+-   With LARS (best accuracy)
+
+| Batch | Base LR | top-1 Accuracy, % | Time to train |
+| :---: | :-----: | :---------------: | :-----------: |
+|  128  |   0.02  |      90.69 %      |  7003.00 sec  |
+|  256  |   0.04  |      90.32 %      |  4808.80 sec  |
+|  512  |   0.08  |      90.40 %      |  3615.13 sec  |
+|  1024 |   0.16  |      90.07 %      |  2929.32 sec  |
+|  2048 |   0.32  |      89.82 %      |  2908.37 sec  |
+|  4096 |   0.64  |      88.09 %      |  2980.63 sec  |
+|  8192 |   1.28  |      86.56 %      |  3314.60 sec  |
+
+* * *
+
 ### Attempt 5
 
 -   Configuration
@@ -296,13 +366,18 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
         -   momentum = 0.9
 
         -   weigth_decay
+
             -   noLars -> 5e-04
             -   withLARS -> 5e-03
 
+        -   trust coefficient = 0.1
+
         -   warm-up for 5 epoch
+
             -   warmup_multiplier = 2
 
         -   polynomial decay (power=2) LR policy (after warm-up)
+
             -   for 175 epoch
             -   minimum lr = 1e-05 \* k
 
@@ -316,45 +391,58 @@ $ python val.py # 학습 결과 확인, 이걸로 학습 진행 도중 update되
 
 -   Without LARS
 
+| Batch | Base LR |    top-1 Accuracy, %   | Time to train |
+| :---: | :-----: | :--------------------: | :-----------: |
+|  128  |   0.05  | 89.50 %<br>(base line) |  3682.72 sec  |
+|  256  |   0.1   |         89.22 %        |  2678.24 sec  |
+|  512  |   0.2   |         89.12 %        |  2337.15 sec  |
+|  1024 |   0.4   |         88.70 %        |  2282.48 sec  |
+|  2048 |   0.8   |         88.89 %        |  2316.96 sec  |
+|  4096 |   1.6   |         86.87 %        |  2515.56 sec  |
+|  8192 |   3.2   |         15.50 %        |  2783.00 sec  |
+
+-   With LARS (closest one to base line, for comparing time to train)
+
 | Batch | Base LR | top-1 Accuracy, % | Time to train |
 | :---: | :-----: | :---------------: | :-----------: |
-|  128  |   0.05  |                   |               |
-|  256  |   0.1   |                   |               |
-|  512  |   0.2   |                   |               |
-|  1024 |   0.4   |                   |               |
-|  2048 |   0.8   |                   |               |
-|  4096 |   1.6   |                   |               |
-|  8192 |   3.2   |                   |               |
+|  128  |   0.05  |      89.56 %      |  5445.55 sec  |
+|  256  |   0.1   |      89.52 %      |  3461.59 sec  |
+|  512  |   0.2   |      89.60 %      |  2738.91 sec  |
+|  1024 |   0.4   |      89.50 %      |  2410.23 sec  |
+|  2048 |   0.8   |      89.42 %      |  2474.93 sec  |
+|  4096 |   1.6   |      88.43 %      |  2618.97 sec  |
+|  8192 |   3.2   |      74.96 %      |  1835.32 sec  |
 
--   With LARS (trust coefficient = 0.1)
+-   With LARS (best accuracy)
 
-| Batch | Base LR | top-1 Accuracy, %<br>closest one to base line<br>(not the best accuracy) | Time to train |
-| :---: | :-----: | :-------------------------------------------------------------------: | :-----------: |
-|  128  |   0.05  |                                                                       |               |
-|  256  |   0.1   |                                                                       |               |
-|  512  |   0.2   |                                                                       |               |
-|  1024 |   0.4   |                                                                       |               |
-|  2048 |   0.8   |                                                                       |               |
-|  4096 |   1.6   |                                                                       |               |
-|  8192 |   3.2   |                                                                       |               |
+| Batch | Base LR | top-1 Accuracy, % | Time to train |
+| :---: | :-----: | :---------------: | :-----------: |
+|  128  |   0.05  |      90.36 %      |  6377.71 sec  |
+|  256  |   0.1   |      90.18 %      |  4219.26 sec  |
+|  512  |   0.2   |      90.08 %      |  3130.41 sec  |
+|  1024 |   0.4   |      89.94 %      |  2578.00 sec  |
+|  2048 |   0.8   |      89.42 %      |  2474.93 sec  |
+|  4096 |   1.6   |      88.43 %      |  2618.97 sec  |
+|  8192 |   3.2   |      74.96 %      |  1835.32 sec  |
 
----
+* * *
+
 ## Visualization
 
  <img src="result_fig-attempt4\result_fig-noLARS\noLars-8192.jpg">
 
- <Fig1. Attempt4, Without LARS, Batch size = 8192>
+ &lt;Fig1. Attempt4, Without LARS, Batch size = 8192>
 
  <img src="result_fig-attempt4\result_fig-withLARS\withLars-8192.jpg">
 
- <Fig2. Attempt4, With LARS, Batch size = 8192>
+ &lt;Fig2. Attempt4, With LARS, Batch size = 8192>
 
-- \<Fig1\>과 \<Fig2\>를 비교하면 LARS를 사용할 때, 좀 더 안정적으로 학습을 시작하고, 부드럽게 accuracy가 증가하는 것을 확인할 수 있다.
+-   \\&lt;Fig1>과 \\&lt;Fig2>를 비교하면 LARS를 사용할 때, 좀 더 안정적으로 학습을 시작하고, 부드럽게 accuracy가 증가하는 것을 확인할 수 있다.
 
-- Attempt3, 4, 5를 작업하면서 만든 Accuracy 변화율 그래프는 아래 링크에서 확인하는 것이 가능하다.
-    - [Attempt3](https://github.com/cmpark0126/pytorch-LARS/tree/master/result_fig-attempt3)
-    - [Attempt4](https://github.com/cmpark0126/pytorch-LARS/tree/master/result_fig-attempt4)
-    - [Attempt5](https://github.com/cmpark0126/pytorch-LARS/tree/master/result_fig-attempt5)
+-   Attempt3, 4, 5를 작업하면서 만든 Accuracy 변화율 그래프는 아래 링크에서 확인하는 것이 가능하다.
+    -   [Attempt3](https://github.com/cmpark0126/pytorch-LARS/tree/master/result_fig-attempt3)
+    -   [Attempt4](https://github.com/cmpark0126/pytorch-LARS/tree/master/result_fig-attempt4)
+    -   [Attempt5](https://github.com/cmpark0126/pytorch-LARS/tree/master/result_fig-attempt5)
 
 ## Analyze
 
