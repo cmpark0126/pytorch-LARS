@@ -73,7 +73,7 @@ class Hyperparams:
                      weight_decay=Hyperparams.weight_decay)
 
 class Hyperparams_for_val:
-    batch_size = 128
     checkpoint_folder_name = 'checkpoint'
     with_lars = False
+    batch_size = 128
     device = [0]
