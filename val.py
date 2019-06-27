@@ -75,11 +75,11 @@ with torch.cuda.device(hp.device[0]):
         print('Resnet50, data=cifar10, With LARS, Validation')
     else:
         print('Resnet50, data=cifar10, Without LARS, Validation')
-    print('batch_size=' + str(hp.batch_size))
-    print('best_acc=' + str(best_acc))
-    print('epoch=' + str(epoch))
-    print('time_to_train=' + str(time_to_train))
     print('basic_info=' + str(basic_info))
+
+    for epo, acc, time in zip(epoch, best_acc, time_to_train):
+        print (str(epo) + ' epoch : ' + str(acc) + ' % : ' + str(time) + ' sec')
+    
     test()
     
 
