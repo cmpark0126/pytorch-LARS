@@ -180,7 +180,7 @@ class SGD_with_lars_ver2(Optimizer):
 #                 print(torch.div(p_norm, d_p_norm))
 #                 print('')
 
-                lr.mul_(global_lr)
+                lr.mul_(-global_lr)
 
                 if weight_decay != 0:
                     d_p.add_(weight_decay, p.data)
@@ -194,7 +194,8 @@ class SGD_with_lars_ver2(Optimizer):
                         buf.mul_(momentum).add_(d_p)
                     d_p = buf
 
-                p.data.add_(-lr, d_p)
+                d_p.mul_(lr)
+                p.data.add_(d_p)
 
 #         input()
         return loss
