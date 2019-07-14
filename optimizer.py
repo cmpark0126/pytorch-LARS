@@ -197,5 +197,4 @@ class SGD_with_lars_ver2(Optimizer):
                 d_p.mul_(lr)
                 p.data.add_(d_p)
 
-#         input()
         return loss
