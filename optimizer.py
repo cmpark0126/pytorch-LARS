@@ -36,14 +36,17 @@ class SGD_without_lars(Optimizer):
             lr = group['lr']
 
             for p in group['params']:
+                #torch.cuda.nvtx.range_push('trial')
                 if p.grad is None:
                     continue
                 d_p = p.grad.data
+                torch.cuda.nvtx.range_push('weight decay')
                 if weight_decay != 0:
                     d_p.add_(weight_decay, p.data)
+                torch.cuda.nvtx.range_pop()
+                # d_p.mul_(lr)
 
-                d_p.mul_(lr)
-
+                torch.cuda.nvtx.range_push('momentum')
                 if momentum != 0:
                     param_state = self.state[p]
                     if 'momentum_buffer' not in param_state:
@@ -52,9 +55,13 @@ class SGD_without_lars(Optimizer):
                         buf = param_state['momentum_buffer']
                         buf.mul_(momentum).add_(d_p)
                     d_p = buf
+                torch.cuda.nvtx.range_pop()
 
-                p.data.add_(-1, d_p)
-
+                torch.cuda.nvtx.range_push('weight update')
+                p.data.add_(-lr, d_p)
+                torch.cuda.nvtx.range_pop()
+                
+                # torch.cuda.nvtx.range_pop()
         return loss
 
 
@@ -168,23 +175,35 @@ class SGD_with_lars_ver2(Optimizer):
                 if p.grad is None:
                     continue
                 d_p = p.grad.data
-
+                
+                # torch.cuda.nvtx.range_push('p_norm')
                 p_norm = torch.norm(p.data, p=2)
+                # torch.cuda.nvtx.range_pop()
 #                 print('p_norm')
 #                 print(p_norm)
-                d_p_norm = torch.norm(d_p, p=2).add_(momentum, p_norm)
+                # torch.cuda.nvtx.range_push('d_p_norm')
+                d_p_norm = torch.norm(d_p, p=2).add_(weight_decay, p_norm)
+                #torch.cuda.nvtx.range_pop()
 #                 print('d_p_norm')
 #                 print(torch.norm(d_p, p=2))
-                lr = torch.div(p_norm, d_p_norm).mul_(trust_coef)
+                #torch.cuda.nvtx.range_push('div')
+                lr = torch.div(p_norm, d_p_norm)
+                #torch.cuda.nvtx.range_pop()
 #                 print('result')
 #                 print(torch.div(p_norm, d_p_norm))
 #                 print('')
 
-                lr.mul_(-global_lr)
+                
+                #torch.cuda.nvtx.range_push('calculate local lr')
+                lr.mul_(-global_lr*trust_coef)
+                #torch.cuda.nvtx.range_pop()
 
+                #torch.cuda.nvtx.range_push('weight decay')
                 if weight_decay != 0:
                     d_p.add_(weight_decay, p.data)
+                #torch.cuda.nvtx.range_pop()
 
+                #torch.cuda.nvtx.range_push('momentum')
                 if momentum != 0:
                     param_state = self.state[p]
                     if 'momentum_buffer' not in param_state:
@@ -193,8 +212,12 @@ class SGD_with_lars_ver2(Optimizer):
                         buf = param_state['momentum_buffer']
                         buf.mul_(momentum).add_(d_p)
                     d_p = buf
+                #torch.cuda.nvtx.range_pop()
 
+                #torch.cuda.nvtx.range_push('weight update')
                 d_p.mul_(lr)
                 p.data.add_(d_p)
+                #torch.cuda.nvtx.range_pop()
+                
 
         return loss
